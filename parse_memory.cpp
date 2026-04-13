@@ -72,3 +72,53 @@ bool present_from_pte(void *ptr) {
     return page_info & (static_cast<uint64_t>(1) << 63);
 }
 
+std::vector<std::pair<size_t, size_t>> get_heap_ranges() {
+    // This only matches lines ending in "[heap]", and captures the respective
+    // start/end address in the first/second group.
+    std::regex re(
+        "([0-9a-f]*)-([0-9a-f]*) .{4} [0-9a-f]* .{2}:.{2} [0-9]* *\\[heap\\]");
+    std::ifstream mapsfile("/proc/self/maps");
+    std::string line;
+
+    std::vector<std::pair<size_t, size_t>> result;
+    while (std::getline(mapsfile, line)) {
+        std::smatch match_result;
+        bool matched = std::regex_match(line, match_result, re);
+        if (!matched) {
+            // not a "heap" line
+            continue;
+        }
+
+        // start/end addresses are in hex, so we use base 16 here
+        size_t start = std::stoul(match_result[1].str(), nullptr, 16);
+        size_t end = std::stoul(match_result[2].str(), nullptr, 16);
+        result.emplace_back(start, end);
+    }
+
+    return result;
+}
+
+/*
+Count how many pages in the heap are present (in RAM), by 'probing' one address from each page and checking if it's present.
+*/
+size_t count_present_in_heap() {
+    size_t present_count = 0;
+    size_t total = 0;
+
+    auto ranges = get_heap_ranges();
+    for (auto [heap_start, heap_end] : ranges) {
+        // We 'probe' in 4kB, i.e., page size, steps, so we apply present_from_pte() to one address from
+        // each page each.
+        for (size_t current = heap_start; current < heap_end; current += 4096) {
+            total++;
+
+            if (present_from_pte(reinterpret_cast<void *>(current))) {
+                present_count++;
+            }
+        }
+    }
+
+    std::cout << "Counted " << present_count << " pages present in " << total
+            << " pages of heap memory.\n";
+    return present_count;
+}

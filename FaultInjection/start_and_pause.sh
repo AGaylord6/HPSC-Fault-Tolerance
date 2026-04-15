@@ -7,10 +7,15 @@ img="input.jpg"
 
 if [ -f "$img" ]; then
     echo "Optimizing $img..."
-    # TODO: actually compress an image instead of transforming it??
-    jpegtran -copy none -optimize -progressive -perfect \
-        -outfile "compressed/$img" "$img" || \
-        echo "Failed to optimize $img"
+    # Lossless transformation
+    # jpegtran -copy none -optimize -progressive -perfect \
+        # -outfile "compressed/$img" "$img" || \
+        # echo "Failed to optimize $img"
+
+    # Lossy compression
+    # https://linux.die.net/man/1/cjpeg
+    cjpeg -quality 75 -optimize -outfile "compressed/$img" "$img" || \
+        echo "Failed to compress $img"
 fi
 
 pid=$!

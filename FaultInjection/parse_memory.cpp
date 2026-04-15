@@ -9,6 +9,10 @@ Other method: using the macros pgd_offset_k, pud_offset, pmd_offset, pte_offset 
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <fstream>
+#include <iostream>
+#include <regex>
+#include <vector>
 
 size_t page_index(void *ptr) {
     return reinterpret_cast<size_t>(ptr) / 4096;
@@ -121,4 +125,9 @@ size_t count_present_in_heap() {
     std::cout << "Counted " << present_count << " pages present in " << total
             << " pages of heap memory.\n";
     return present_count;
+}
+
+int main() {
+    count_present_in_heap();
+    return 0;
 }

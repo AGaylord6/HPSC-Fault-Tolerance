@@ -129,5 +129,9 @@ size_t count_present_in_heap() {
 
 int main() {
     count_present_in_heap();
+
+    // TODO: outline information flow (including order of starting, pausing, reading mapping, faulting, and resuming)
+    // replace faults in shared libraries (or avoid entirely)
+
     return 0;
 }

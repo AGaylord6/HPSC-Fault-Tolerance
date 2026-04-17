@@ -1,0 +1,21 @@
+37	1	37	2aca525000-2aca531000 r-xp 00000000 b3:06 17                             /usr/bin/cjpeg
+37	1	37	2aca531000-2aca532000 r--p 0000b000 b3:06 17                             /usr/bin/cjpeg
+37	1	37	2aca532000-2aca533000 rw-p 0000c000 b3:06 17                             /usr/bin/cjpeg
+37	1	37	2aca533000-2aca576000 rw-p 00000000 00:00 0                              [heap]
+37	1	37	3f98c18000-3f98d8b000 r-xp 00000000 b3:06 29648                          /usr/lib/riscv64-linux-gnu/libc.so.6
+37	1	37	3f98d8b000-3f98d8e000 r--p 00173000 b3:06 29648                          /usr/lib/riscv64-linux-gnu/libc.so.6
+37	1	37	3f98d8e000-3f98d90000 rw-p 00176000 b3:06 29648                          /usr/lib/riscv64-linux-gnu/libc.so.6
+37	1	37	3f98d90000-3f98d9c000 rw-p 00000000 00:00 0 
+37	1	37	3f98d9c000-3f98e12000 r-xp 00000000 b3:06 30500                          /usr/lib/riscv64-linux-gnu/libjpeg.so.8.2.2
+37	1	37	3f98e12000-3f98e13000 r--p 00076000 b3:06 30500                          /usr/lib/riscv64-linux-gnu/libjpeg.so.8.2.2
+37	1	37	3f98e13000-3f98e14000 rw-p 00077000 b3:06 30500                          /usr/lib/riscv64-linux-gnu/libjpeg.so.8.2.2
+37	1	37	3f98e14000-3f98e16000 rw-p 00000000 00:00 0 
+37	1	37	3f98e2b000-3f98e2d000 r--p 00000000 00:00 0                              [vvar]
+37	1	37	3f98e2d000-3f98e2f000 r-xp 00000000 00:00 0                              [vdso]
+37	1	37	3f98e2f000-3f98e52000 r-xp 00000000 b3:06 28696                          /usr/lib/riscv64-linux-gnu/ld-linux-riscv64-lp64d.so.1
+37	1	37	3f98e52000-3f98e54000 r--p 00022000 b3:06 28696                          /usr/lib/riscv64-linux-gnu/ld-linux-riscv64-lp64d.so.1
+37	1	37	3f98e54000-3f98e55000 rw-p 00024000 b3:06 28696                          /usr/lib/riscv64-linux-gnu/ld-linux-riscv64-lp64d.so.1
+37	1	37	3f98e55000-3f98e56000 rw-p 00000000 00:00 0 
+37	1	37	3ff3121000-3ff3142000 rw-p 00000000 00:00 0                              [stack]
+36	1	36	3f94a29000-3f98c18000 rw-p 00000000 00:00 0 
+1	37	37	3f9761c000-3f98c18000 rw-p 00000000 00:00 0 

@@ -25,7 +25,7 @@ fi
 mkdir -p "$trace_dir/snapshots"
 mkdir -p "$trace_dir/compressed"
 
-output_img="$trace_dir/compressed/$(basename "$img")"
+output_img="$trace_dir/compressed/$(basename "${img%.*}.jpg")"
 meta_csv="$trace_dir/snapshot_index.csv"
 
 printf "snapshot,timestamp_unix_ns,elapsed_ms\n" > "$meta_csv"

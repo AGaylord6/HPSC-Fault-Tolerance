@@ -1,0 +1,14 @@
+Trace directory: results2
+Snapshots analyzed: 38
+Unique mapping lines (exact): 21
+Mappings present in every snapshot: 19
+Transient mappings (appear/disappear at least once): 2
+Mappings first seen after snapshot 1: 1
+Mappings missing before final snapshot: 1
+
+Generated files:
+  results2/analysis/mapping_presence.tsv
+  results2/analysis/always_present_mappings.txt
+  results2/analysis/transient_mappings.tsv
+  results2/analysis/appeared_after_start.txt
+  results2/analysis/disappeared_before_end.txt

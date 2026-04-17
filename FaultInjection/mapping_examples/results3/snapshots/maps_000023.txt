@@ -1,0 +1,20 @@
+2aab1ad000-2aab1b9000 r-xp 00000000 b3:06 17                             /usr/bin/cjpeg
+2aab1b9000-2aab1ba000 r--p 0000b000 b3:06 17                             /usr/bin/cjpeg
+2aab1ba000-2aab1bb000 rw-p 0000c000 b3:06 17                             /usr/bin/cjpeg
+2aab1bb000-2aab1fe000 rw-p 00000000 00:00 0                              [heap]
+3f910cd000-3f952bc000 rw-p 00000000 00:00 0 
+3f952bc000-3f9542f000 r-xp 00000000 b3:06 29648                          /usr/lib/riscv64-linux-gnu/libc.so.6
+3f9542f000-3f95432000 r--p 00173000 b3:06 29648                          /usr/lib/riscv64-linux-gnu/libc.so.6
+3f95432000-3f95434000 rw-p 00176000 b3:06 29648                          /usr/lib/riscv64-linux-gnu/libc.so.6
+3f95434000-3f95440000 rw-p 00000000 00:00 0 
+3f95440000-3f954b6000 r-xp 00000000 b3:06 30500                          /usr/lib/riscv64-linux-gnu/libjpeg.so.8.2.2
+3f954b6000-3f954b7000 r--p 00076000 b3:06 30500                          /usr/lib/riscv64-linux-gnu/libjpeg.so.8.2.2
+3f954b7000-3f954b8000 rw-p 00077000 b3:06 30500                          /usr/lib/riscv64-linux-gnu/libjpeg.so.8.2.2
+3f954b8000-3f954ba000 rw-p 00000000 00:00 0 
+3f954cf000-3f954d1000 r--p 00000000 00:00 0                              [vvar]
+3f954d1000-3f954d3000 r-xp 00000000 00:00 0                              [vdso]
+3f954d3000-3f954f6000 r-xp 00000000 b3:06 28696                          /usr/lib/riscv64-linux-gnu/ld-linux-riscv64-lp64d.so.1
+3f954f6000-3f954f8000 r--p 00022000 b3:06 28696                          /usr/lib/riscv64-linux-gnu/ld-linux-riscv64-lp64d.so.1
+3f954f8000-3f954f9000 rw-p 00024000 b3:06 28696                          /usr/lib/riscv64-linux-gnu/ld-linux-riscv64-lp64d.so.1
+3f954f9000-3f954fa000 rw-p 00000000 00:00 0 
+3ff9459000-3ff947a000 rw-p 00000000 00:00 0                              [stack]

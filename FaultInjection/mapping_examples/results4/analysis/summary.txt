@@ -1,0 +1,14 @@
+Trace directory: FaultInjection/mapping_examples/results4
+Snapshots analyzed: 1
+Unique mapping lines (exact): 20
+Mappings present in every snapshot: 20
+Transient mappings (appear/disappear at least once): 0
+Mappings first seen after snapshot 1: 0
+Mappings missing before final snapshot: 0
+
+Generated files:
+  FaultInjection/mapping_examples/results4/analysis/mapping_presence.tsv
+  FaultInjection/mapping_examples/results4/analysis/always_present_mappings.txt
+  FaultInjection/mapping_examples/results4/analysis/transient_mappings.tsv
+  FaultInjection/mapping_examples/results4/analysis/appeared_after_start.txt
+  FaultInjection/mapping_examples/results4/analysis/disappeared_before_end.txt

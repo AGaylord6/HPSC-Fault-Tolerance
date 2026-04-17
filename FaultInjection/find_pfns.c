@@ -98,19 +98,23 @@ int main(int argc, char **argv) {
             continue;
         }
 
+        printf("Considering mapping: %s", line);
+
         mappings_considered++;
         for (uint64_t addr = start; addr < end; addr += page_size) {
             uint64_t entry = read_pagemap_entry(pagemap, addr, page_size);
             if ((entry & (UINT64_C(1) << 63)) == 0) {
+                printf("  Page at vaddr 0x%" PRIx64 " not present, skipping\n", addr);
                 continue;
             }
 
             uint64_t pfn = entry & pfn_mask;
             if (pfn == 0) {
+                printf("  Page at vaddr 0x%" PRIx64 " has invalid PFN, skipping\n", addr);
                 continue;
             }
 
-            fprintf(out, "0x%" PRIx64 "\n", pfn);
+            printf("  Found present page at vaddr 0x%" PRIx64 " with PFN 0x%" PRIx64 "\n", addr, pfn);
             present_pages++;
         }
     }

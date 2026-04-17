@@ -104,11 +104,17 @@ int main(int argc, char **argv) {
                 continue;
             }
 
+            // flip selected bit by XORing
             value ^= (uint8_t)(1u << bit_index);
             if (pwrite(mem_fd, &value, sizeof(value), target) != (ssize_t)sizeof(value)) {
                 fprintf(stderr, "pwrite failed at 0x%" PRIx64 ": %s\n", (uint64_t)target, strerror(errno));
                 continue;
             }
+
+            printf("Flipped bit %u at physical address 0x%" PRIx64 " (PFN=0x%" PRIx64 ")\n",
+                   bit_index,
+                   (uint64_t)target,
+                   pfn);
 
             total_flips++;
         }

@@ -28,30 +28,61 @@ TARGET_MAPPING="${4:-heap}"
 PFN_LIST="${PFN_LIST:-${SCRIPT_DIR}/pfns.txt}"
 FLIPS_PER_PFN="${FLIPS_PER_PFN:-1}"
 DRY_RUN="${DRY_RUN:-1}"
+CJPEG_BIN="${CJPEG_BIN:-cjpeg}"
 
 FIND_PFNS_BIN="${SCRIPT_DIR}/find_pfns"
 INJECT_BIN="${SCRIPT_DIR}/inject_pfn_faults"
+TEMP_PFN_LIST="${PFN_LIST}.tmp"
+
+if ! command -v "${CJPEG_BIN}" >/dev/null 2>&1; then
+    echo "cjpeg not found in PATH (or CJPEG_BIN is invalid): ${CJPEG_BIN}"
+    exit 2
+fi
+
+if [[ ! -f "${INPUT}" ]]; then
+    echo "Input file does not exist: ${INPUT}"
+    exit 3
+fi
+
+mkdir -p "$(dirname "${OUTPUT}")"
 
 cc -O2 -std=c11 -Wall -Wextra -o "${FIND_PFNS_BIN}" "${SCRIPT_DIR}/find_pfns.c"
 cc -O2 -std=c11 -Wall -Wextra -o "${INJECT_BIN}" "${SCRIPT_DIR}/inject_pfn_faults.c"
 
-cjpeg -quality "${QUALITY}" "${INPUT}" > "${OUTPUT}" &
+"${CJPEG_BIN}" -quality "${QUALITY}" "${INPUT}" > "${OUTPUT}" &
 pid=$!
+
+cleanup() {
+    if kill -0 "${pid}" 2>/dev/null; then
+        kill -CONT "${pid}" 2>/dev/null || true
+    fi
+    rm -f "${TEMP_PFN_LIST}"
+}
+trap cleanup EXIT
 
 if ! kill -0 "${pid}" 2>/dev/null; then
     echo "Failed to start cjpeg process"
-    exit 2
+    exit 4
 fi
 
 echo "Started cjpeg with PID ${pid}"
 
 sleep 0.1
 
-# Soft pause (SIGTSTP). For a hard stop use SIGSTOP.
-kill -TSTP "${pid}"
+# Hard pause to avoid shell-job-control quirks with SIGTSTP (-TSTP)
+kill -STOP "${pid}"
 echo "Paused PID ${pid}"
 
-"${FIND_PFNS_BIN}" "${pid}" "${TARGET_MAPPING}" "${PFN_LIST}"
+"${FIND_PFNS_BIN}" "${pid}" "${TARGET_MAPPING}" "${TEMP_PFN_LIST}"
+
+if [[ ! -s "${TEMP_PFN_LIST}" ]]; then
+    echo "No PFNs found for target '${TARGET_MAPPING}'."
+    echo "If pages are present but PFN is zero, run with CAP_SYS_ADMIN/root and relaxed pagemap policy."
+    exit 5
+fi
+
+sort -u "${TEMP_PFN_LIST}" > "${PFN_LIST}"
+echo "Wrote deduplicated PFN list to ${PFN_LIST}"
 
 if [[ "${DRY_RUN}" == "1" ]]; then
     "${INJECT_BIN}" "${PFN_LIST}" "${FLIPS_PER_PFN}" --dry-run

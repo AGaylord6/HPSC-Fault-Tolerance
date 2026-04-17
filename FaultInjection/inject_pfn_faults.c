@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
 #ifndef __linux__
     (void)argc;
     (void)argv;
-    fprintf(stderr, "inject_pfn_faults is Linux-only (/dev/mem access is required).\n");
+    fprintf(stderr, "inject_pfn_faults requires Linux (/dev/mem access).\n");
     return 1;
 #else
     if (argc < 3 || argc > 4) {
@@ -58,13 +58,19 @@ int main(int argc, char **argv) {
     long raw_page_size = sysconf(_SC_PAGESIZE);
     const uint64_t page_size = raw_page_size > 0 ? (uint64_t)raw_page_size : UINT64_C(4096);
     if (!dry_run) {
+        if (geteuid() != 0) {
+            fprintf(stderr, "Live mode requires root privileges (effective uid 0).\n");
+            fclose(in);
+            return 5;
+        }
+
         mem_fd = open("/dev/mem", O_RDWR | O_SYNC);
         if (mem_fd < 0) {
             fprintf(stderr,
                     "Failed to open /dev/mem: %s (run as root, and ensure kernel policy allows access)\n",
                     strerror(errno));
             fclose(in);
-            return 5;
+            return 6;
         }
     }
 
@@ -75,6 +81,10 @@ int main(int argc, char **argv) {
     char line[256];
 
     while (fgets(line, sizeof(line), in) != NULL) {
+        if (line[0] == '#' || line[0] == '\n') {
+            continue;
+        }
+
         char *line_end = NULL;
         errno = 0;
         uint64_t pfn = strtoull(line, &line_end, 0);

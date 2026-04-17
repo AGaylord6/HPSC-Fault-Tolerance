@@ -13,22 +13,62 @@ set -euo pipefail
 # 5) Resume and wait for completion.
 # Resume cjpeg process and observe for crashes, hangs, or output corruption
 
-if [[ $# -lt 2 || $# -gt 4 ]]; then
-    echo "Usage: $0 <input.ppm> <output.jpg> [quality] [target_mapping]"
-    echo "  target_mapping examples: heap, all, libc, /usr/lib"
+if [[ $# -lt 2 ]]; then
+    echo "Usage: $0 <input.ppm> <output.jpg> [QUALITY] [TARGET_MAPPING] [--DRY_RUN 0|1] [--FLIPS_PER_PFN N] [--PFN_LIST path] [--CJPEG_BIN path]"
+    echo "  TARGET_MAPPING examples: heap, all, libc, /usr/lib"
     exit 1
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INPUT="$1"
 OUTPUT="$2"
-QUALITY="${3:-75}"
-TARGET_MAPPING="${4:-heap}"
+shift 2
 
-PFN_LIST="${PFN_LIST:-${SCRIPT_DIR}/pfns.txt}"
-FLIPS_PER_PFN="${FLIPS_PER_PFN:-1}"
-DRY_RUN="${DRY_RUN:-1}"
-CJPEG_BIN="${CJPEG_BIN:-cjpeg}"
+QUALITY=75
+TARGET_MAPPING=heap
+DRY_RUN=1
+FLIPS_PER_PFN=1
+PFN_LIST="${SCRIPT_DIR}/pfns.txt"
+CJPEG_BIN="cjpeg"
+
+if [[ $# -gt 0 && ${1:0:1} != '-' ]]; then
+    QUALITY="$1"
+    shift
+fi
+
+if [[ $# -gt 0 && ${1:0:1} != '-' ]]; then
+    TARGET_MAPPING="$1"
+    shift
+fi
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --DRY_RUN)
+            DRY_RUN="${2:?missing value for --DRY_RUN}"
+            shift 2
+            ;;
+        --FLIPS_PER_PFN)
+            FLIPS_PER_PFN="${2:?missing value for --FLIPS_PER_PFN}"
+            shift 2
+            ;;
+        --PFN_LIST)
+            PFN_LIST="${2:?missing value for --PFN_LIST}"
+            shift 2
+            ;;
+        --CJPEG_BIN)
+            CJPEG_BIN="${2:?missing value for --CJPEG_BIN}"
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            echo "Unknown option: $1"
+            exit 1
+            ;;
+    esac
+done
 
 FIND_PFNS_BIN="${SCRIPT_DIR}/find_pfns"
 INJECT_BIN="${SCRIPT_DIR}/inject_pfn_faults"
@@ -45,6 +85,8 @@ if [[ ! -f "${INPUT}" ]]; then
 fi
 
 mkdir -p "$(dirname "${OUTPUT}")"
+
+echo "Using QUALITY=${QUALITY} TARGET_MAPPING=${TARGET_MAPPING} DRY_RUN=${DRY_RUN} FLIPS_PER_PFN=${FLIPS_PER_PFN} PFN_LIST=${PFN_LIST}"
 
 cc -O2 -std=c11 -Wall -Wextra -o "${FIND_PFNS_BIN}" "${SCRIPT_DIR}/find_pfns.c"
 cc -O2 -std=c11 -Wall -Wextra -o "${INJECT_BIN}" "${SCRIPT_DIR}/inject_pfn_faults.c"

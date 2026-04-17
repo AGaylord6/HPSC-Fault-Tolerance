@@ -127,6 +127,7 @@ int main(int argc, char **argv) {
             }
 
             printf("Found PFN=0x%" PRIx64 " for vaddr=0x%" PRIx64 "\n", pfn, addr);
+            fprintf(out, "%" PRIu64 "\n", pfn);
             pages_written++;
         }
     }

@@ -15,8 +15,8 @@ Requires LKM to be loaded (with ioctl exposed)
 #include <unistd.h>
 #include <fcntl.h>
 
-#include <ioctl.h>
-#include "faultmem.h"
+#include <sys/ioctl.h>
+#include "faultmem/include/faultmem.h"
 
 static void usage(const char *prog) {
     fprintf(stderr, "Usage: %s <pfn_file> <flips_per_pfn> [--dry-run]\n", prog);
@@ -120,13 +120,13 @@ int main(int argc, char **argv) {
             //     continue;
             // }
 
-            struct seu_flip_request req = {
+            struct bit_flip_request req = {
                 .phys_addr = target,
                 .bit = bit_index
             };
 
             // Send ioctl to kernel module to flip the bit at the specified physical address
-            ioctl(mem_fd, FAULTINJ_FLIP_BIT, &req);
+            ioctl(mem_fd, FAULTMEM_BIT_FLIP, &req);
 
             printf("Flipped bit %u at physical address 0x%" PRIx64 " (PFN=0x%" PRIx64 ")\n",
                    bit_index,
@@ -149,5 +149,4 @@ int main(int argc, char **argv) {
             dry_run ? "dry-run" : "live");
 
     return 0;
-#endif
 }

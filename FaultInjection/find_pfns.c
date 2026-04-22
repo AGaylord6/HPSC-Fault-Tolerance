@@ -6,9 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef __linux__
 #include <unistd.h>
-#endif
 
 
 #define LINE_BUFSZ 4096
@@ -17,7 +15,6 @@
 #define PAGEMAP_SWAPPED (UINT64_C(1) << 62)
 #define PAGEMAP_PFN_MASK ((UINT64_C(1) << 55) - 1)
 
-#ifdef __linux__
 static bool mapping_matches(const char *line, const char *target) {
     if (strcmp(target, "all") == 0) {
         return true;
@@ -40,15 +37,8 @@ static uint64_t read_pagemap_entry(FILE *pagemap, uint64_t vaddr, uint64_t page_
     }
     return entry;
 }
-#endif
 
 int main(int argc, char **argv) {
-#ifndef __linux__
-    (void)argc;
-    (void)argv;
-    fprintf(stderr, "find_pfns requires Linux (/proc/<pid>/maps and /proc/<pid>/pagemap).\n");
-    return 1;
-#else
     if (argc != 4) {
         fprintf(stderr, "Usage: %s <pid> <target: heap|all|substring> <output_file>\n", argv[0]);
         return 1;
@@ -152,5 +142,4 @@ int main(int argc, char **argv) {
         }
 
     return 0;
-#endif
 }

@@ -126,7 +126,10 @@ int main(int argc, char **argv) {
             };
 
             // Send ioctl to kernel module to flip the bit at the specified physical address
-            ioctl(mem_fd, FAULTMEM_BIT_FLIP, &req);
+            if (ioctl(mem_fd, FAULTMEM_BIT_FLIP, &req) != 0) {
+                fprintf(stderr, "ioctl failed at 0x%" PRIx64 ": %s\n", (uint64_t)target, strerror(errno));
+                continue;
+            }
 
             printf("Flipped bit %u at physical address 0x%" PRIx64 " (PFN=0x%" PRIx64 ")\n",
                    bit_index,

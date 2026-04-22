@@ -303,7 +303,9 @@ static long device_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 
     pr_debug("ioctl bit flip: phys=%pa bit=%u\n", &phys, req.bit);
 
+    // Translate PA to VA using RAM's direct mapping in kernel's address space
     vaddr = __va((phys_addr_t)pfn << PAGE_SHIFT);
+    // Find offset within page and add to VA
     ptr = (uint8_t *)vaddr + (phys & (PAGE_SIZE - 1));
 
     // flip exactly one bit

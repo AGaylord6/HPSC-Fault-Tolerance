@@ -64,10 +64,11 @@ int main(int argc, char **argv) {
             return 5;
         }
 
-        mem_fd = open("/dev/mem", O_RDWR | O_SYNC);
+        // mem_fd = open("/dev/mem", O_RDWR | O_SYNC);
+        int mem_fd = open("/dev/faultinj", O_RDWR);
         if (mem_fd < 0) {
             fprintf(stderr,
-                    "Failed to open /dev/mem: %s (run as root, and ensure kernel policy allows access)\n",
+                    "Failed to open /dev/faultinj: %s (run as root, and ensure kernel policy allows access)\n",
                     strerror(errno));
             fclose(in);
             return 6;
@@ -108,18 +109,26 @@ int main(int argc, char **argv) {
                 continue;
             }
 
-            uint8_t value = 0;
-            if (pread(mem_fd, &value, sizeof(value), target) != (ssize_t)sizeof(value)) {
-                fprintf(stderr, "pread failed at 0x%" PRIx64 ": %s\n", (uint64_t)target, strerror(errno));
-                continue;
-            }
+            // uint8_t value = 0;
+            // if (pread(mem_fd, &value, sizeof(value), target) != (ssize_t)sizeof(value)) {
+            //     fprintf(stderr, "pread failed at 0x%" PRIx64 ": %s\n", (uint64_t)target, strerror(errno));
+            //     continue;
+            // }
 
-            // flip selected bit by XORing
-            value ^= (uint8_t)(1u << bit_index);
-            if (pwrite(mem_fd, &value, sizeof(value), target) != (ssize_t)sizeof(value)) {
-                fprintf(stderr, "pwrite failed at 0x%" PRIx64 ": %s\n", (uint64_t)target, strerror(errno));
-                continue;
-            }
+            // // flip selected bit by XORing
+            // value ^= (uint8_t)(1u << bit_index);
+            // if (pwrite(mem_fd, &value, sizeof(value), target) != (ssize_t)sizeof(value)) {
+            //     fprintf(stderr, "pwrite failed at 0x%" PRIx64 ": %s\n", (uint64_t)target, strerror(errno));
+            //     continue;
+            // }
+
+            struct seu_flip_request req = {
+                .phys_addr = target,
+                .bit = bit_index
+            };
+
+            // Send ioctl to kernel module to flip the bit at the specified physical address
+            ioctl(mem_fd, FAULTINJ_FLIP_BIT, &req);
 
             printf("Flipped bit %u at physical address 0x%" PRIx64 " (PFN=0x%" PRIx64 ")\n",
                    bit_index,

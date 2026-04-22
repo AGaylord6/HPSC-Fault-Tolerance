@@ -1,3 +1,8 @@
+/*
+Given a file containing a list of PFNs (one per line), randomly flip bits in the corresponding physical memory pages.
+
+Requires LKM to be loaded (with ioctl exposed)
+*/
 #define _GNU_SOURCE
 #include <errno.h>
 #include <inttypes.h>
@@ -7,24 +12,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#ifdef __linux__
 #include <unistd.h>
 #include <fcntl.h>
-#endif
 
-#ifdef __linux__
+#include <ioctl.h>
+#include "faultmem.h"
+
 static void usage(const char *prog) {
     fprintf(stderr, "Usage: %s <pfn_file> <flips_per_pfn> [--dry-run]\n", prog);
 }
-#endif
 
 int main(int argc, char **argv) {
-#ifndef __linux__
-    (void)argc;
-    (void)argv;
-    fprintf(stderr, "inject_pfn_faults requires Linux (/dev/mem access).\n");
-    return 1;
-#else
     if (argc < 3 || argc > 4) {
         usage(argv[0]);
         return 1;

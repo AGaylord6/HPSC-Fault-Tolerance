@@ -63,10 +63,10 @@ int main(int argc, char **argv) {
         }
 
         // mem_fd = open("/dev/mem", O_RDWR | O_SYNC);
-        int mem_fd = open("/dev/faultmem", O_RDWR);
+        mem_fd = open("/dev/faultmem", O_RDWR);
         if (mem_fd < 0) {
             fprintf(stderr,
-                    "Failed to open /dev/faultinj: %s (run as root, and ensure kernel policy allows access)\n",
+                    "Failed to open /dev/faultmem: %s (run as root, and ensure kernel policy allows access)\n",
                     strerror(errno));
             fclose(in);
             return 6;

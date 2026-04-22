@@ -1,3 +1,8 @@
+Dataset/cache
+FaultInjection/inject_pfn_faults
+FaultInjection/find_pfns
+FaultInjection/pfns.txt
+
 # Prerequisites
 *.d
 

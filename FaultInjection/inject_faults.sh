@@ -86,14 +86,18 @@ ensure_cached_output() {
         local cache_tmp
         cache_tmp="$(mktemp "${CACHE_OUTPUT}.tmp.XXXXXX")"
         "${CJPEG_BIN}" -quality "${QUALITY}" "${INPUT}" > "${cache_tmp}"
+	jpegtran -copy none "${cache_tmp}" > "${cache_tmp}"
         mv -f "${cache_tmp}" "${CACHE_OUTPUT}"
-        echo "Created cached baseline at ${CACHE_OUTPUT}"
+	echo "Created cached (and stripped) baseline at ${CACHE_OUTPUT}"
     else
-        echo "Using cached baseline at ${CACHE_OUTPUT}"
+	echo "Using cached (and stripped) baseline at ${CACHE_OUTPUT}"
     fi
 }
 
 verify_output() {
+    
+    jpegtran -copy none "${OUTPUT}" > "${OUTPUT}"
+    echo "Stripped metadata from ${OUTPUT} for compare"
     if cmp -s "${OUTPUT}" "${CACHE_OUTPUT}"; then
         echo "Output matches cached baseline"
         return 0

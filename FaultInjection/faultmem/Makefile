@@ -1,8 +1,10 @@
 ifneq ($(KERNELRELEASE),)
 obj-m += faultmem.o
+faultmem-objs := src/faultmem.o
+ccflags-y += -I$(src)/include
 else
 KERNEL_SRC_DIR ?= /lib/modules/$(shell uname -r)/build
-MODULE_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+MODULE_DIR := $(CURDIR)
 
 all: faultmem.ko
 

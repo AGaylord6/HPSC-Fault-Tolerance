@@ -73,6 +73,35 @@ done
 FIND_PFNS_BIN="${SCRIPT_DIR}/find_pfns"
 INJECT_BIN="${SCRIPT_DIR}/inject_pfn_faults"
 TEMP_PFN_LIST="${PFN_LIST}.tmp"
+DATASET_DIR="${SCRIPT_DIR}/../Dataset"
+CACHE_DIR="${DATASET_DIR}/cache"
+INPUT_BASENAME="$(basename "${INPUT}")"
+INPUT_STEM="${INPUT_BASENAME%.*}"
+CACHE_OUTPUT="${CACHE_DIR}/${INPUT_STEM}_q${QUALITY}.jpg"
+
+ensure_cached_output() {
+    mkdir -p "${CACHE_DIR}"
+
+    if [[ ! -s "${CACHE_OUTPUT}" ]]; then
+        local cache_tmp
+        cache_tmp="$(mktemp "${CACHE_OUTPUT}.tmp.XXXXXX")"
+        "${CJPEG_BIN}" -quality "${QUALITY}" "${INPUT}" > "${cache_tmp}"
+        mv -f "${cache_tmp}" "${CACHE_OUTPUT}"
+        echo "Created cached baseline at ${CACHE_OUTPUT}"
+    else
+        echo "Using cached baseline at ${CACHE_OUTPUT}"
+    fi
+}
+
+verify_output() {
+    if cmp -s "${OUTPUT}" "${CACHE_OUTPUT}"; then
+        echo "Output matches cached baseline"
+        return 0
+    fi
+
+    echo "Output differs from cached baseline"
+    return 6
+}
 
 if ! command -v "${CJPEG_BIN}" >/dev/null 2>&1; then
     echo "cjpeg not found in PATH (or CJPEG_BIN is invalid): ${CJPEG_BIN}"
@@ -85,6 +114,7 @@ if [[ ! -f "${INPUT}" ]]; then
 fi
 
 mkdir -p "$(dirname "${OUTPUT}")"
+ensure_cached_output
 
 echo "Using QUALITY=${QUALITY} TARGET_MAPPING=${TARGET_MAPPING} DRY_RUN=${DRY_RUN} FLIPS_PER_PFN=${FLIPS_PER_PFN} PFN_LIST=${PFN_LIST}"
 
@@ -143,4 +173,13 @@ status=$?
 set -e
 
 echo "cjpeg exit code: ${status}"
-exit "${status}"
+verify_status=0
+if ! verify_output; then
+    verify_status=6
+fi
+
+if [[ ${status} -ne 0 ]]; then
+    exit "${status}"
+fi
+
+exit "${verify_status}"

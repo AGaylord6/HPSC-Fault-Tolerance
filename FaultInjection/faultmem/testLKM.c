@@ -8,6 +8,7 @@ Test the iotcl and pread/pwrite interfaces of kernel module
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
+#include <stdint.h>
 #include "include/faultmem.h"
 
 int main() {

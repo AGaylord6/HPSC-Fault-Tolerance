@@ -131,10 +131,10 @@ int main(int argc, char **argv) {
                 continue;
             }
 
-            printf("Flipped bit %u at physical address 0x%" PRIx64 " (PFN=0x%" PRIx64 ")\n",
-                   bit_index,
-                   (uint64_t)target,
-                   pfn);
+//printf("Flipped bit %u at physical address 0x%" PRIx64 " (PFN=0x%" PRIx64 ")\n",
+//                   bit_index,
+//                   (uint64_t)target,
+//                   pfn);
 
             total_flips++;
         }

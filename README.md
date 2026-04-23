@@ -6,22 +6,24 @@ This project explores fault tolerance on the Banana Pi BPI-F3 and its SpacemiT K
 
 Future work will involve novel fault tolerance methods that can overcome the corrupted memory.
 
+***
 ### Members
 
-Andrew Gaylord
+* Andrew Gaylord
 
-Zach Kennedy
+* Zach Kennedy
 
-Cole Descalzi
+* Cole Descalzi
 
-Nicholas Morales
+* Nicholas Morales
 
 ### Advisors
 
-Professor Matthew Morrison: Notre Dame professor of Computing in Spaceflight.
+* Professor Matthew Morrison: Notre Dame professor of Computing in Spaceflight.
 
-Pete Fiaco: member of NASA/JPL's HPSC (High Performance Space Computer) Leadership Team.
+* Pete Fiaco: member of NASA/JPL's HPSC (High Performance Space Computer) Leadership Team.
 
+***
 ### Structure
 
 TODO: create `Setup/` folder with instructions from the Google docs
@@ -34,6 +36,7 @@ TODO: create `Setup/` folder with instructions from the Google docs
 
 `AsymmetricCluster/`: examples that demonstrate the custom RISC-V Integrated Matrix Extension (IME) set that is supported by one of the SpacemiT clusters.
 
+***
 ### Setup
 
-See `Setup/` for OS booting, environment setup
+See `Setup/README.md` for OS booting, environment setup

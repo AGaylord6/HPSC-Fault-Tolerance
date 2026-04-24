@@ -1,1 +1,1 @@
-See [Banana Pi Documenation](Banana_Pi_Documentation.pdf) file for instructions.
+See [Banana Pi Documenation](Setup/Banana Pi Documentation.pdf) file for instructions.

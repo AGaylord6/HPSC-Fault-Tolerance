@@ -1,4 +1,4 @@
-## faultmeme
+## faultmem LKM
 
 Custom Loadable Kernel Module (LMK) for fault injection.
 

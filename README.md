@@ -26,11 +26,11 @@ Future work will involve novel fault tolerance methods that can overcome the cor
 ***
 ### Structure
 
-TODO: create `Setup/` folder with instructions from the Google docs
+`Setup/`: instructions for OS installation and booting.
 
 `Benchmarking/`: explore the speed, memory usage, and SIMD capabilities of image compression on this chip (WIP).
 
-`FaultInjection/`: scripts that allow for automated fault injection into a running image compression process, including a custom Loadable Kernel Module (LKM) for Linux. 
+`FaultInjection/`: scripts that allow for automated fault injection into a running image compression process, including a custom Loadable Kernel Module (LKM) for Linux.
 
 `Dataset/`: contains JPEG and PPM versions of sample Google Earth images.
 

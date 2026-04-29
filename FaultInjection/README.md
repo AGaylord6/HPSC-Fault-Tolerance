@@ -1,4 +1,4 @@
-## Fault Injection for Image Processing
+## Fault Injection for Image Compression
 
 High level steps:
 
@@ -7,7 +7,7 @@ High level steps:
 2. Pause process and get PID
 3. Read virtual memory mappings
 4. Find physical frames in RAM being used by different parts of the compression process (like stack, heap, etc)
-5. Use Loadable Kernel Module (See `FaultInjection\faultmem\README.md`) flip bits in the target frames, mimicking Single Event Upsets (SEU)
+5. Use Loadable Kernel Module (See `FaultInjection\faultmem\README.md`) to flip bits in the target frames, mimicking Single Event Upsets (SEU)
 6. Resume compression and anslyze failure
 
 ***
@@ -39,7 +39,7 @@ We found that the only appreciable difference in the VMA's from start to finish 
 
 `inject_faults.sh`: main script.
 
-`find_fns.c`: takes in a target VMA, then translates to PFNs by using VA's as indices in `/proc/<PID>/pagemap`.
+`find_pfns.c`: takes in a target VMA, then translates to a list of PFN's that it is mapped to. It uses VA's as indices in `/proc/<PID>/pagemap` to find their corresponding PNF. All present frames are written to a temporary .txt for further analysis. 
 
-`inject_pfn_faults.c`: takes PFNs from prev step and calls LKM to inject faults into the targeted region. 
+`inject_pfn_faults.c`: takes PFNs from prev step and calls LKM to inject faults into the targeted region.
 

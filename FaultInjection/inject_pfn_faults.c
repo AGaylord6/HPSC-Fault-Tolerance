@@ -16,6 +16,7 @@ Requires LKM to be loaded (with ioctl exposed)
 #include <fcntl.h>
 
 #include <sys/ioctl.h>
+// LKM header has ioctl definitions and request struct for communicating with kernel module
 #include "faultmem/include/faultmem.h"
 
 static void usage(const char *prog) {
@@ -63,6 +64,7 @@ int main(int argc, char **argv) {
         }
 
         // mem_fd = open("/dev/mem", O_RDWR | O_SYNC);
+        // Open LKM
         mem_fd = open("/dev/faultmem", O_RDWR);
         if (mem_fd < 0) {
             fprintf(stderr,
@@ -79,6 +81,7 @@ int main(int argc, char **argv) {
     size_t total_flips = 0;
     char line[256];
 
+    // Iterate over every given PFN and attempt specified number of random bit flips in corresponding physical page
     while (fgets(line, sizeof(line), in) != NULL) {
         if (line[0] == '#' || line[0] == '\n') {
             continue;
@@ -96,6 +99,7 @@ int main(int argc, char **argv) {
             uint64_t phys_addr = pfn * page_size;
             uint64_t byte_offset = (uint64_t)(rand() % (int)page_size);
             uint8_t bit_index = (uint8_t)(rand() % 8);
+            // Find a random byte and bit offset within page to flip
             off_t target = (off_t)(phys_addr + byte_offset);
 
             if (dry_run) {
@@ -107,6 +111,7 @@ int main(int argc, char **argv) {
                 continue;
             }
 
+            // This method is supported by LKM, but is more work
             // uint8_t value = 0;
             // if (pread(mem_fd, &value, sizeof(value), target) != (ssize_t)sizeof(value)) {
             //     fprintf(stderr, "pread failed at 0x%" PRIx64 ": %s\n", (uint64_t)target, strerror(errno));
@@ -120,6 +125,7 @@ int main(int argc, char **argv) {
             //     continue;
             // }
 
+            // Construct ioctl request
             struct bit_flip_request req = {
                 .phys_addr = target,
                 .bit = bit_index
@@ -131,10 +137,10 @@ int main(int argc, char **argv) {
                 continue;
             }
 
-//printf("Flipped bit %u at physical address 0x%" PRIx64 " (PFN=0x%" PRIx64 ")\n",
-//                   bit_index,
-//                   (uint64_t)target,
-//                   pfn);
+            //printf("Flipped bit %u at physical address 0x%" PRIx64 " (PFN=0x%" PRIx64 ")\n",
+            //                   bit_index,
+            //                   (uint64_t)target,
+            //                   pfn);
 
             total_flips++;
         }

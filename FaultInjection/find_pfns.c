@@ -1,3 +1,8 @@
+/*
+Given a process ID and a target string, find the PFNs of all pages mapped by that process into the specified VMA region
+
+Outputs present/valid PFNs to the specified output file, one per line.
+*/
 #define _GNU_SOURCE
 #include <errno.h>
 #include <inttypes.h>
@@ -84,6 +89,7 @@ int main(int argc, char **argv) {
     size_t no_pfn_pages = 0;
     size_t pages_written = 0;
 
+    // Read each mapping from /proc/<pid>/maps
     while (fgets(line, sizeof(line), maps) != NULL) {
         uint64_t start = 0;
         uint64_t end = 0;
@@ -91,6 +97,7 @@ int main(int argc, char **argv) {
             continue;
         }
 
+        // Only consider target VMA ranges
         if (!mapping_matches(line, target)) {
             continue;
         }
@@ -98,9 +105,11 @@ int main(int argc, char **argv) {
         printf("Considering mapping: %s", line);
 
         mappings_considered++;
+        // Find physical page frame for each page in mapping
         for (uint64_t addr = start; addr < end; addr += page_size) {
             pages_scanned++;
             uint64_t entry = read_pagemap_entry(pagemap, addr, page_size);
+            // Check if page is present (mapped into RAM)
             if ((entry & PAGEMAP_PRESENT) == 0) {
                 if (entry & PAGEMAP_SWAPPED) {
                     swapped_pages++;
@@ -111,12 +120,13 @@ int main(int argc, char **argv) {
             present_pages++;
 
             uint64_t pfn = entry & PAGEMAP_PFN_MASK;
+            // If PFN is zero, page is hidden
             if (pfn == 0) {
                 no_pfn_pages++;
                 continue;
             }
 
-//printf("Found PFN=0x%" PRIx64 " for vaddr=0x%" PRIx64 "\n", pfn, addr);
+            //printf("Found PFN=0x%" PRIx64 " for vaddr=0x%" PRIx64 "\n", pfn, addr);
             fprintf(out, "%" PRIu64 "\n", pfn);
             pages_written++;
         }

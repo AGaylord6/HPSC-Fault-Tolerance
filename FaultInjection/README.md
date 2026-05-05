@@ -8,7 +8,7 @@ High level steps:
 3. Read virtual memory mappings
 4. Find physical frames in RAM being used by different parts of the compression process (like stack, heap, etc)
 5. Use Loadable Kernel Module (See `FaultInjection\faultmem\README.md`) to flip bits in the target frames, mimicking Single Event Upsets (SEU)
-6. Resume compression and anslyze failure
+6. Resume compression and analyze failure
 
 ***
 ### How to Run
@@ -27,6 +27,10 @@ Similarly, the heap can be corrupted: `sudo ./FaultInjection/inject_faults.sh Da
 
 ![Alt text](./results/heap_corruption.png)
 
+If you corrupt `/usr/bin/cjpeg`, seems like you need to `sudo apt remove libjpeg-turbo-progs` and reinstall them.
+
+If you corrupt `/usr/lib/riscv64-linux-gnu/ld-linux-riscv64-lp64d.so.1`, a 
+
 ***
 ### Understanding Memory Mapping
 
@@ -39,7 +43,7 @@ We found that the only appreciable difference in the VMA's from start to finish 
 
 `inject_faults.sh`: main script.
 
-`find_pfns.c`: takes in one or more target VMAs, then translates them to a list of PFN's that they are mapped to. Targets can be comma-separated, and each target can optionally include a 0-based occurrence index such as `/usr/bin/cjpeg 2` (third match). The special target `anon` matches VMAs with an empty label/pathname and can also be indexed (for example, `anon 0`). It uses VA's as indices in `/proc/<PID>/pagemap` to find their corresponding PNF. All present frames are written to a temporary .txt for further analysis. 
+`find_pfns.c`: takes in one or more target VMAs, then translates them to a list of PFN's that they are mapped to. Targets can be comma-separated, and each target can optionally include a 0-based occurrence index such as `/usr/bin/cjpeg 2` (third match). The special target `anon` matches VMAs with an empty label/pathname and can also be indexed (for example, `anon 0`). It uses VA's as indices in `/proc/<PID>/pagemap` to find their corresponding PNF. All present frames are written to a temporary .txt for further analysis.
 
 `inject_pfn_faults.c`: takes PFNs from prev step and calls LKM to inject faults into the targeted region.
 

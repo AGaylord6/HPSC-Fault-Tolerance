@@ -13,9 +13,11 @@ High level steps:
 ***
 ### How to Run
 
-Follow instructions in `FaultInjection\faultmem\README.md` to install the LKM.
+Run `git clone https://github.com/AGaylord6/HPSC-Fault-Tolerance.git` and nagivate into the cloned directory.
 
-Install libjpeg-turbo utilities with `sudo apt install libjpeg-turbo-progs`.
+Follow the instructions in `FaultInjection\faultmem\README.md` to install the LKM.
+
+Install libjpeg-turbo utilities with `sudo apt install libjpeg-turbo-progs` (used for image compression). 
 
 Navigate to the root of this repo. Test the fault injection architecture with a dry run: `sudo ./FaultInjection/inject_faults.sh Dataset/03_large.ppm test.jpg 75 stack --DRY_RUN 1 --FLIPS_PER_PFN 1`. Check that PFNs are found and processed correctly.
 

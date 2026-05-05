@@ -11,7 +11,7 @@ It supports 2 interfaces for fault injection:
 ***
 ## How to Install and Test
 
-To compile and install, run `chmod +x ./reload_faultmem.sh` and `./reload_faultmem.sh`. The device should appear at `/dev/faultmem`.
+Nagivate to the `faultmem` directory. To compile and install, run `chmod +x ./reload_faultmem.sh` and `./reload_faultmem.sh`. The device should appear at `/dev/faultmem`.
 
 To test, run `gcc ./testLKM.c -o testLKM`, then `sudo ./testLKM`.
 

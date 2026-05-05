@@ -29,7 +29,9 @@ Similarly, the heap can be corrupted: `sudo ./FaultInjection/inject_faults.sh Da
 
 If you corrupt `/usr/bin/cjpeg`, seems like you need to `sudo apt remove libjpeg-turbo-progs` and reinstall them.
 
-If you corrupt `/usr/lib/riscv64-linux-gnu/ld-linux-riscv64-lp64d.so.1`, a 
+If you corrupt `/usr/lib/riscv64-linux-gnu/ld-linux-riscv64-lp64d.so.1`, a system restart is required. More research is required to figure out how faulting the physical page impacts the version on disk.
+
+![Alt text](./results/libc_corruption.png)
 
 ***
 ### Understanding Memory Mapping

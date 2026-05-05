@@ -17,9 +17,9 @@ Follow instructions in `FaultInjection\faultmem\README.md` to install the LKM.
 
 Install libjpeg-turbo utilities with `sudo apt install libjpeg-turbo-progs`.
 
-Test the fault injection architecture with a dry run: `sudo ./FaultInjection/inject_faults.sh Dataset/03_large.ppm test.jpg 75 stack --DRY_RUN 1 --FLIPS_PER_PFN 1`. Check that PFNs are found and processed correctly.
+Navigate to the root of this repo. Test the fault injection architecture with a dry run: `sudo ./FaultInjection/inject_faults.sh Dataset/03_large.ppm test.jpg 75 stack --DRY_RUN 1 --FLIPS_PER_PFN 1`. Check that PFNs are found and processed correctly.
 
-Inject faults into the stack: `sudo ./FaultInjection/inject_faults.sh Dataset/03_large.ppm test.jpg 75 stack --DRY_RUN 0 --FLIPS_PER_PFN 1`. About half (?) the time, the program will segfault like so:
+Inject faults into the stack: `sudo ./FaultInjection/inject_faults.sh Dataset/03_large.ppm test.jpg 75 stack --DRY_RUN 0 --FLIPS_PER_PFN 1`. About half (?) the time, the program will segfault like so (with slightly less verbose output):
 
 ![Alt text](./results/stack_corruption.png)
 
@@ -39,7 +39,7 @@ We found that the only appreciable difference in the VMA's from start to finish 
 
 `inject_faults.sh`: main script.
 
-`find_pfns.c`: takes in one or more target VMAs, then translates them to a list of PFN's that they are mapped to. Targets can be comma-separated, and each target can optionally include a 1-based occurrence number such as `/usr/bin/cjpeg 2`. It uses VA's as indices in `/proc/<PID>/pagemap` to find their corresponding PNF. All present frames are written to a temporary .txt for further analysis.
+`find_pfns.c`: takes in one or more target VMAs, then translates them to a list of PFN's that they are mapped to. Targets can be comma-separated, and each target can optionally include a 0-based occurrence index such as `/usr/bin/cjpeg 2` (third match). The special target `anon` matches VMAs with an empty label/pathname and can also be indexed (for example, `anon 0`). It uses VA's as indices in `/proc/<PID>/pagemap` to find their corresponding PNF. All present frames are written to a temporary .txt for further analysis. 
 
 `inject_pfn_faults.c`: takes PFNs from prev step and calls LKM to inject faults into the targeted region.
 

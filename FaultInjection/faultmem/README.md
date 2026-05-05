@@ -6,12 +6,12 @@ Provides read/write access to physical memory, circumventing the need for `/dev/
 
 It supports 2 interfaces for fault injection:
 * ioctl command (outlined in `include/faultmem.h`) that flips a bit at the specified physical address and bit index. This mode is easier to use for our SEU simulation purposes.
-* Seeking, reading, and writing to the `/dev/faultmem` device as a direct substitute for `/dev/mem`. This gives the user more control over the type/length of error being injected. 
+* Seeking, reading, and writing to the `/dev/faultmem` device as a direct substitute for `/dev/mem`. This gives the user more control over the type/length of error being injected.
 
 ***
 ## How to Install and Test
 
-To compile and install, run `./reload_faultmem.sh`. The device should appear at `/dev/faultmem`.
+To compile and install, run `chmod +x ./reload_faultmem.sh` and `./reload_faultmem.sh`. The device should appear at `/dev/faultmem`.
 
 To test, run `gcc ./testLKM.c -o testLKM`, then `sudo ./testLKM`.
 

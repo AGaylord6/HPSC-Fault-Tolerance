@@ -15,7 +15,8 @@ set -euo pipefail
 
 if [[ $# -lt 2 ]]; then
     echo "Usage: $0 <input.ppm> <output.jpg> [QUALITY] [TARGET_VMAs] [--DRY_RUN 0|1] [--FLIPS_PER_PFN N] [--PFN_LIST path] [--CJPEG_BIN path]"
-    echo "  TARGET_VMAs examples: heap, all, libc, /usr/lib, '/usr/bin/cjpeg 2, heap, libc 1'"
+    echo "  TARGET_VMAs examples: heap, anon, all, libc, /usr/lib, '/usr/bin/cjpeg 2, anon 0, libc 1'"
+    echo "  Occurrence indexes are 0-based (e.g., '/usr/bin/cjpeg 2' selects the 3rd match)."
     exit 1
 fi
 

@@ -23,8 +23,8 @@ Outputs present/valid PFNs to the specified output file, one per line.
 
 // Struct for storing target VMA specifications parsed from the target string.
 // Each spec has a pattern to match against the VMA line,
-// and an optional occurrence count to specify which occurrence of the pattern to match
-// Ex: "heap 2" would match the second VMA with "heap" in its description
+// and an optional 0-based occurrence index for disambiguation.
+// Ex: "heap 0" would match the first VMA with "heap" in its description.
 typedef struct {
     char *pattern;
     uint64_t occurrence;
@@ -172,6 +172,28 @@ static bool parse_target_specs(const char *target, target_spec_t **specs_out, si
     return true;
 }
 
+static bool mapping_has_empty_label(const char *line) {
+    char *copy = strdup(line);
+    if (copy == NULL) {
+        return false;
+    }
+
+    char *cursor = copy;
+    // Skip required fields: addr perms offset dev inode
+    for (int i = 0; i < 5; i++) {
+        cursor = strtok(i == 0 ? cursor : NULL, " \t\n");
+        if (cursor == NULL) {
+            free(copy);
+            return false;
+        }
+    }
+
+    char *rest = strtok(NULL, "\n");
+    bool is_empty_label = (rest == NULL) || (*trim_whitespace(rest) == '\0');
+    free(copy);
+    return is_empty_label;
+}
+
 static bool mapping_matches_spec(const char *line, target_spec_t *spec) {
     if (strcmp(spec->pattern, "all") == 0) {
         return true;
@@ -181,13 +203,22 @@ static bool mapping_matches_spec(const char *line, target_spec_t *spec) {
         if (strstr(line, "[heap]") == NULL) {
             return false;
         }
+    } else if (strcmp(spec->pattern, "anon") == 0) {
+        if (!mapping_has_empty_label(line)) {
+            return false;
+        }
     } else if (strstr(line, spec->pattern) == NULL) {
         // Check if pattern is a substring of the line
         return false;
     }
 
+    if (!spec->has_occurrence) {
+        return true;
+    }
+
+    bool is_selected_occurrence = (spec->seen_matches == spec->occurrence);
     spec->seen_matches++;
-    return !spec->has_occurrence || spec->seen_matches == spec->occurrence;
+    return is_selected_occurrence;
 }
 
 static uint64_t read_pagemap_entry(FILE *pagemap, uint64_t vaddr, uint64_t page_size) {
@@ -205,7 +236,7 @@ static uint64_t read_pagemap_entry(FILE *pagemap, uint64_t vaddr, uint64_t page_
 
 int main(int argc, char **argv) {
     if (argc != 4) {
-        fprintf(stderr, "Usage: %s <pid> <target: heap|all|substring[, substring...]> <output_file>\n", argv[0]);
+        fprintf(stderr, "Usage: %s <pid> <target: heap|anon|all|substring[, substring...]> <output_file>\n", argv[0]);
         return 1;
     }
 

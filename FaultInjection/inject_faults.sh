@@ -14,8 +14,8 @@ set -euo pipefail
 # Resume cjpeg process and observe for crashes, hangs, or output corruption
 
 if [[ $# -lt 2 ]]; then
-    echo "Usage: $0 <input.ppm> <output.jpg> [QUALITY] [TARGET_MAPPING] [--DRY_RUN 0|1] [--FLIPS_PER_PFN N] [--PFN_LIST path] [--CJPEG_BIN path]"
-    echo "  TARGET_MAPPING examples: heap, all, libc, /usr/lib"
+    echo "Usage: $0 <input.ppm> <output.jpg> [QUALITY] [TARGET_VMAs] [--DRY_RUN 0|1] [--FLIPS_PER_PFN N] [--PFN_LIST path] [--CJPEG_BIN path]"
+    echo "  TARGET_VMAs examples: heap, all, libc, /usr/lib, '/usr/bin/cjpeg 2, heap, libc 1'"
     exit 1
 fi
 
@@ -125,7 +125,7 @@ fi
 mkdir -p "$(dirname "${OUTPUT}")"
 ensure_cached_output
 
-echo "Using QUALITY=${QUALITY} TARGET_MAPPING=${TARGET_MAPPING} DRY_RUN=${DRY_RUN} FLIPS_PER_PFN=${FLIPS_PER_PFN} PFN_LIST=${PFN_LIST}"
+echo "Using QUALITY=${QUALITY} TARGET_VMAs=${TARGET_MAPPING} DRY_RUN=${DRY_RUN} FLIPS_PER_PFN=${FLIPS_PER_PFN} PFN_LIST=${PFN_LIST}"
 
 cc -O2 -std=c11 -Wall -Wextra -o "${FIND_PFNS_BIN}" "${SCRIPT_DIR}/find_pfns.c"
 cc -O2 -std=c11 -Wall -Wextra -o "${INJECT_BIN}" "${SCRIPT_DIR}/inject_pfn_faults.c"

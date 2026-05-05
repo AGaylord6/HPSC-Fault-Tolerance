@@ -90,7 +90,7 @@ static bool parse_target_item(const char *item_text, target_spec_t *spec) {
         if (errno == 0 && parse_end != candidate && *trim_whitespace(parse_end) == '\0') {
             *end = '\0';
             char *pattern = trim_whitespace(item);
-            if (*pattern == '\0' || occurrence == 0) {
+            if (*pattern == '\0') {
                 free(copy);
                 return false;
             }
